@@ -14,10 +14,10 @@ bool SuccExpr::operator==(const SuccExpr &rhs) const {
   return m_operand == rhs.m_operand;
 }
 
-LambdaExpr::LambdaExpr(const std::string &parameterName,
+LambdaExpr::LambdaExpr(std::string parameterName,
                        experimental::Type parameterType, ExprHandle body)
-    : m_parameterName(parameterName), m_parameterType(std::move(parameterType)),
-      m_body(std::move(body)) {}
+    : m_parameterName(std::move(parameterName)),
+      m_parameterType(std::move(parameterType)), m_body(std::move(body)) {}
 
 LambdaExpr::LambdaExpr(const LambdaExpr &expr)
     : m_parameterName(expr.m_parameterName),

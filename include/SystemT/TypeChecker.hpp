@@ -22,15 +22,15 @@ public:
   }
 
   experimental::Type operator()(const VarExpr &expr) override {
-    const auto it = current_env.find(expr.m_name);
-    if (it == current_env.end()) {
+    const auto variable_it = current_env.find(expr.m_name);
+    if (variable_it == current_env.end()) {
       throw std::runtime_error(
           std::format("Type Error: Unbound variable '{}'", expr.m_name));
     }
-    return it->second;
+    return variable_it->second;
   };
 
-  experimental::Type operator()(const NatConstExpr &) override {
+  experimental::Type operator()(const NatConstExpr & /*expr*/) override {
     return experimental::NaturalType{};
   }
 
@@ -77,9 +77,9 @@ public:
             experimental::NaturalType{},
             experimental::Lambda(zeroCase_type, zeroCase_type))) {
       throw std::runtime_error(std::format(
-          "Type Error (recursion): expected Lam Nat -> Lam {} -> {}, got {}",
-          NaturalType{}.toString(), zeroCase_type.toString(),
-          zeroCase_type.toString(), succCase_type.toString()));
+          "Type Error (recursion): expected Lam Nat -> Lam Nat -> {}, got {}",
+          zeroCase_type.toString(), zeroCase_type.toString(),
+          succCase_type.toString()));
     }
     return zeroCase_type;
   }

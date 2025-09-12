@@ -10,7 +10,7 @@ set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY})
 set(SOURCES src/Substitution.cpp src/Tokenizer.cpp src/Parser.cpp src/Types.cpp
             src/Expr.cpp)
 set(HEADERS include/SystemT/Expr.hpp include/SystemT/Types.hpp
-            include/SystemT/primitives.hpp include/SystemT/TypeChecker.hpp)
+            include/SystemT/TypeChecker.hpp)
 
 add_library(${PROJECT_NAME} SHARED)
 target_sources(

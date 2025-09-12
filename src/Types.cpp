@@ -18,7 +18,7 @@ Lambda::Lambda(std::unique_ptr<Type> domain,
                std::unique_ptr<Type> codomain) noexcept
     : m_domain(std::move(domain)), m_codomain(std::move(codomain)) {}
 
-Lambda::Lambda(Type domain, Type codomain) noexcept
+Lambda::Lambda(const Type &domain, const Type &codomain) noexcept
     : m_domain(std::make_unique<Type>(domain)),
       m_codomain(std::make_unique<Type>(codomain)) {}
 

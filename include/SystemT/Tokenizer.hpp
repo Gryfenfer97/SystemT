@@ -28,7 +28,7 @@ struct Token {
 
 class Lexer {
 public:
-  Lexer(const std::string &input) : m_input(input), m_pos(0) {}
+  Lexer(std::string input) : m_input(std::move(input)), m_pos(0) {}
 
   Token getNextToken();
 

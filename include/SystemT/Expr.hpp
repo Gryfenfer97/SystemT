@@ -21,7 +21,7 @@ using ExprHandle = std::unique_ptr<Expr>;
 class VarExpr {
 public:
   std::string m_name;
-  VarExpr(const std::string &name) : m_name(name) {}
+  VarExpr(std::string name) : m_name(std::move(name)) {}
 
   [[nodiscard]] bool operator==(const VarExpr &rhs) const {
     return m_name == rhs.m_name;
@@ -50,7 +50,7 @@ public:
   experimental::Type m_parameterType;
   ExprHandle m_body;
 
-  LambdaExpr(const std::string &parameterName, experimental::Type parameterType,
+  LambdaExpr(std::string parameterName, experimental::Type parameterType,
              ExprHandle body);
   ~LambdaExpr();
   LambdaExpr(const LambdaExpr &);
@@ -119,7 +119,9 @@ struct Expr {
   std::variant<VarExpr, NatConstExpr, SuccExpr, LambdaExpr, ApplyExpr,
                RecursionExpr, NativeFunctionExpr>
       kind;
-  [[nodiscard]] bool operator==(const Expr &e) const { return kind == e.kind; }
+  [[nodiscard]] bool operator==(const Expr &expr) const {
+    return kind == expr.kind;
+  }
   template <typename T> [[nodiscard]] bool checkType() const {
     return std::holds_alternative<T>(kind);
   }

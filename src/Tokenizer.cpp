@@ -1,9 +1,7 @@
 #include "SystemT/Tokenizer.hpp"
-#include <print>
 #include <stdexcept>
 
 Token Lexer::getNextToken() {
-  // Skip whitespace.
   while (m_pos < m_input.length() && std::isspace(m_input[m_pos]) != 0) {
     m_pos++;
   }
@@ -14,7 +12,6 @@ Token Lexer::getNextToken() {
 
   char currentChar = m_input[m_pos];
 
-  // Handle single-character tokens.
   if (currentChar == '(') {
     m_pos++;
     return {.type = TokenType::LPAREN, .value = "("};
@@ -35,10 +32,6 @@ Token Lexer::getNextToken() {
     m_pos++;
     return {.type = TokenType::NAT_TYPE, .value = "N"};
   }
-  // if (currentChar == 'S') {
-  //   m_pos++;
-  //   return {.type = TokenType::SUCC, .value = "S"};
-  // }
   if (currentChar == '-' && m_input[m_pos + 1] == '>') {
     m_pos += 2;
     return {.type = TokenType::ARROW, .value = "->"};

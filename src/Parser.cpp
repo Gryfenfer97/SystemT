@@ -74,24 +74,15 @@ std::unique_ptr<systemT::Expr> Parser::parseAtom() {
   }
   case TokenType::LPAREN: {
     advance();
-    std::println("after: LPARENIUHIUH");
     auto expr = parseTerm();
-    std::println("before: LPARENIUHIUH");
     consume(TokenType::RPAREN, ")");
     return expr;
   }
-  // case TokenType::SUCC: {
-  //   advance();
-  //   return std::make_unique<systemT::Expr>(systemT::SuccExpr(parseAtom()));
-  // }
   case TokenType::REC: {
     consume(TokenType::REC, "rec");
     auto zeroCase = parseAtom();
-    std::println("zeroCase");
     auto succCase = parseAtom();
-    std::println("succCase");
     auto num = parseAtom();
-    std::println("num");
     return std::make_unique<systemT::Expr>(systemT::RecursionExpr(
         std::move(zeroCase), std::move(succCase), std::move(num)));
   }

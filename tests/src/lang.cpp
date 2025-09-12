@@ -1,4 +1,3 @@
-#include "SystemT/ASTPrint.hpp"
 #include <SystemT/Expr.hpp>
 #include <SystemT/Parser.hpp>
 #include <SystemT/Substitution.hpp>
@@ -12,8 +11,6 @@ TEST(Lang, succ) {
   const std::string code = "S 5";
   Parser parser(code);
   auto ast = parser.parse();
-  st::ASTPrintVisitor astPrinter;
-  std::println("{}", astPrinter.toString(*ast));
   systemT::SubstitutionVisitor visitor;
   auto value = visitor.reduce(*ast);
   ASSERT_TRUE(value.checkType<systemT::NatConstExpr>());
@@ -36,8 +33,6 @@ TEST(Lang, application) {
   const std::string code = "(lam x: N.S x) 5";
   Parser parser(code);
   auto ast = parser.parse();
-  st::ASTPrintVisitor astPrinter;
-  std::println("{}", astPrinter.toString(*ast));
   systemT::SubstitutionVisitor visitor;
   auto value = visitor.reduce(*ast);
   ASSERT_TRUE(value.checkType<systemT::NatConstExpr>());
@@ -65,14 +60,10 @@ TEST(Lang, Recurence) {
 }
 
 TEST(Lang, AddFunction) {
-  // const std::string code =
-  //     "lam m: N. lam n: N. (rec n (lam k: N. lam r: N. (S r) m)) 5 7";
-  const std::string code = "(lam x: N. (lam y: N. (rec x (lam k: N. (lam r: N. "
-                           "(S r))) y))) 5 7";
+  const std::string code = "(lam x: N. lam y: N. (rec x (lam k: N. (lam r: N. "
+                           "(S r))) y)) 5 7";
   Parser parser(code);
   auto ast = parser.parse();
-  st::ASTPrintVisitor astPrinter;
-  std::println("{}", astPrinter.toString(*ast));
   systemT::SubstitutionVisitor visitor;
   auto value = visitor.reduce(*ast);
   ASSERT_TRUE(value.checkType<systemT::NatConstExpr>());
