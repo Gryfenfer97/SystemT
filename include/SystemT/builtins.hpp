@@ -1,0 +1,19 @@
+#pragma once
+#include "Expr.hpp"
+#include "Substitution.hpp"
+
+namespace systemT::builtins {
+static NativeFunctionExpr successor(
+    "S",
+    [](const Expr &arg) -> Expr {
+      SubstitutionVisitor visitor;
+      if (arg.checkType<NatConstExpr>()) {
+        return NatConstExpr{arg.as<NatConstExpr>().m_value + 1};
+      }
+      if (arg.checkType<VarExpr>()) {
+        return SuccExpr{std::make_unique<Expr>(arg)};
+      }
+      throw std::runtime_error("Trying to call Succ on a non-number");
+    },
+    experimental::NaturalType{}, experimental::NaturalType{});
+} // namespace systemT::builtins
