@@ -32,7 +32,7 @@ public:
   Lambda &operator=(Lambda other) noexcept;
   Lambda &operator=(Lambda &&other) noexcept = default;
 
-  [[nodiscard]] bool operator==(const Lambda &) const;
+  [[nodiscard]] bool operator==(const Lambda & /*rhs*/) const;
 
   [[nodiscard]] const Type &getDomain() const { return *m_domain; }
   [[nodiscard]] const Type &getCodomain() const { return *m_codomain; }
