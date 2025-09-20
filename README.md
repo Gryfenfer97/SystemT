@@ -29,7 +29,7 @@ cmake --build build
 The interpreter itself has no external dependencies, but the test suite requires **Conan 2**.  
 ```bash
 # 1. Install test dependencies
-conan install . --output-folder=build/tests --build=missing
+conan install . --output-folder=build --build=missing
 
 # 2. Configure with the "tests" preset
 cmake --preset tests

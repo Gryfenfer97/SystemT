@@ -3,7 +3,6 @@
 #include <SystemT/builtins.hpp>
 #include <gtest/gtest.h>
 #include <memory>
-#include <print>
 
 namespace st = systemT;
 
@@ -20,7 +19,6 @@ TEST(TypeChecker, Lambda) {
                                std::make_unique<st::Expr>(st::VarExpr("x")));
   st::TypeCheckerVisitor tc;
   auto type = tc.getType(id);
-  std::println("{}", type.toString());
   ASSERT_TRUE(
       tc.getType(id).check<st::Lambda>(st::NaturalType{}, st::NaturalType{}));
 }
