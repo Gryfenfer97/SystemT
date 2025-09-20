@@ -142,18 +142,7 @@ public:
     return succ_evaluator.reduce(app);
   }
 
-  Expr operator()(const NativeFunctionExpr &expr) override {
-    return expr;
-    // SubstitutionVisitor visitor(current_env);
-    // auto reduced_operand = visitor.reduce(*value.m_operand);
-    // if (reduced_operand.checkType<NatConstExpr>()) {
-    //   return NatConstExpr{reduced_operand.as<NatConstExpr>().m_value + 1};
-    // }
-    // if (reduced_operand.checkType<VarExpr>()) {
-    //   return SuccExpr{std::make_unique<Expr>(reduced_operand)};
-    // }
-    // throw std::runtime_error("Trying to call Succ on a non-number");
-  }
+  Expr operator()(const NativeFunctionExpr &expr) override { return expr; }
 
 private:
   Expr applyLambda(const LambdaExpr &func, const Expr &arg) {

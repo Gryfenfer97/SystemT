@@ -3,12 +3,9 @@
 #include <string>
 #include <variant>
 
-namespace systemT::experimental {
-class Type;
-}
-template <> struct std::formatter<systemT::experimental::Type>;
+namespace systemT {
 
-namespace systemT::experimental {
+class Type;
 
 class Any {
 public:
@@ -85,4 +82,6 @@ private:
   std::variant<NaturalType, Lambda, Boolean, Any> content;
 };
 
-} // namespace systemT::experimental
+} // namespace systemT
+
+template <> struct std::formatter<systemT::Type>;

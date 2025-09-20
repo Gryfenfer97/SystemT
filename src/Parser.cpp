@@ -33,18 +33,17 @@ std::unique_ptr<systemT::Expr> Parser::parseLam() {
     advance();
     Token parameterName = consume(TokenType::VAR, "var");
     consume(TokenType::COLON, ":");
-    systemT::experimental::Type type = parseType();
+    systemT::Type type = parseType();
 
-    if (!type.check<systemT::experimental::Lambda>(
-            systemT::experimental::Any{}, systemT::experimental::Any{})) {
+    if (!type.check<systemT::Lambda>(systemT::Any{}, systemT::Any{})) {
       throw std::runtime_error("Parser error: Type is not a lambda");
     }
 
     consume(TokenType::DOT, ".");
     auto body = parseLam();
     auto lambda = std::make_unique<systemT::LambdaExpr>(
-        parameterName.value,
-        type.as<systemT::experimental::Lambda>().getDomain(), std::move(body));
+        parameterName.value, type.as<systemT::Lambda>().getDomain(),
+        std::move(body));
     return std::make_unique<systemT::Expr>(std::move(*lambda));
   }
   return parseApp();
@@ -92,20 +91,20 @@ std::unique_ptr<systemT::Expr> Parser::parseAtom() {
   }
 }
 
-systemT::experimental::Type Parser::parseType() {
+systemT::Type Parser::parseType() {
   auto left = parseTypeAtom();
   if (m_currentToken.type == TokenType::ARROW) {
     advance();
     auto right = parseType();
-    return systemT::experimental::Lambda{left, right};
+    return systemT::Lambda{left, right};
   }
-  return systemT::experimental::Lambda{left, systemT::experimental::Any{}};
+  return systemT::Lambda{left, systemT::Any{}};
 }
 
-systemT::experimental::Type Parser::parseTypeAtom() {
+systemT::Type Parser::parseTypeAtom() {
   if (m_currentToken.type == TokenType::NAT_TYPE) {
     advance();
-    return systemT::experimental::NaturalType{};
+    return systemT::NaturalType{};
   }
   if (m_currentToken.type == TokenType::LPAREN) {
     advance();

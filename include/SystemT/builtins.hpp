@@ -15,5 +15,5 @@ static NativeFunctionExpr successor(
       }
       throw std::runtime_error("Trying to call Succ on a non-number");
     },
-    experimental::NaturalType{}, experimental::NaturalType{});
+    NaturalType{}, NaturalType{});
 } // namespace systemT::builtins

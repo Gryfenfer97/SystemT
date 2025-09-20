@@ -14,8 +14,8 @@ bool SuccExpr::operator==(const SuccExpr &rhs) const {
   return m_operand == rhs.m_operand;
 }
 
-LambdaExpr::LambdaExpr(std::string parameterName,
-                       experimental::Type parameterType, ExprHandle body)
+LambdaExpr::LambdaExpr(std::string parameterName, Type parameterType,
+                       ExprHandle body)
     : m_parameterName(std::move(parameterName)),
       m_parameterType(std::move(parameterType)), m_body(std::move(body)) {}
 
@@ -61,8 +61,7 @@ bool RecursionExpr::operator==(const RecursionExpr &rhs) const {
 }
 
 NativeFunctionExpr::NativeFunctionExpr(std::string name, NativeFn function,
-                                       experimental::Type domain,
-                                       experimental::Type codomain)
+                                       Type domain, Type codomain)
     : m_name(std::move(name)), m_function(std::move(function)),
       m_domain(std::move(domain)), m_codomain(std::move(codomain)) {}
 NativeFunctionExpr::~NativeFunctionExpr() = default;

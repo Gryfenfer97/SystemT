@@ -14,8 +14,8 @@ private:
   [[nodiscard]] std::unique_ptr<systemT::Expr> parseLam();
   [[nodiscard]] std::unique_ptr<systemT::Expr> parseTerm();
   [[nodiscard]] std::unique_ptr<systemT::Expr> parseSuccArg();
-  [[nodiscard]] systemT::experimental::Type parseType();
-  [[nodiscard]] systemT::experimental::Type parseTypeAtom();
+  [[nodiscard]] systemT::Type parseType();
+  [[nodiscard]] systemT::Type parseTypeAtom();
   Token consume(const TokenType &expected, const std::string &expected_str);
   Token advance();
 

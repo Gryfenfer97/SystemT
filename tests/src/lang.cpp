@@ -25,8 +25,7 @@ TEST(Lang, lambda) {
   auto value = visitor.reduce(*ast);
   systemT::TypeCheckerVisitor tc;
   auto type = tc.getType(value);
-  ASSERT_TRUE(type.check<st::experimental::Lambda>(
-      st::experimental::NaturalType{}, st::experimental::NaturalType{}));
+  ASSERT_TRUE(type.check<st::Lambda>(st::NaturalType{}, st::NaturalType{}));
 }
 
 TEST(Lang, application) {
@@ -60,8 +59,8 @@ TEST(Lang, Recurence) {
 }
 
 TEST(Lang, AddFunction) {
-  const std::string code = "(lam x: N. lam y: N. (rec x (lam k: N. (lam r: N. "
-                           "(S r))) y)) 5 7";
+  const std::string code = "(lam x: N. lam y: N. rec x (lam k: N. (lam r: N. "
+                           "(S r))) y) 5 7";
   Parser parser(code);
   auto ast = parser.parse();
   systemT::SubstitutionVisitor visitor;

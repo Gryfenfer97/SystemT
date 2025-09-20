@@ -12,52 +12,50 @@ TEST(TypeChecker, succ) {
       st::ApplyExpr(std::make_unique<st::Expr>(st::builtins::successor),
                     std::make_unique<st::Expr>(st::NatConstExpr(0)));
   st::TypeCheckerVisitor tc;
-  ASSERT_TRUE(tc.getType(two).check<st::experimental::NaturalType>());
+  ASSERT_TRUE(tc.getType(two).check<st::NaturalType>());
 }
 
 TEST(TypeChecker, Lambda) {
-  st::Expr id = st::LambdaExpr("x", st::experimental::NaturalType{},
+  st::Expr id = st::LambdaExpr("x", st::NaturalType{},
                                std::make_unique<st::Expr>(st::VarExpr("x")));
   st::TypeCheckerVisitor tc;
   auto type = tc.getType(id);
   std::println("{}", type.toString());
-  ASSERT_TRUE(tc.getType(id).check<st::experimental::Lambda>(
-      st::experimental::NaturalType{}, st::experimental::NaturalType{}));
+  ASSERT_TRUE(
+      tc.getType(id).check<st::Lambda>(st::NaturalType{}, st::NaturalType{}));
 }
 
 TEST(TypeChecker, Recursion) {
   st::Expr five = st::RecursionExpr(
       std::make_unique<st::Expr>(st::NatConstExpr(0)),
       std::make_unique<st::Expr>(st::LambdaExpr(
-          "x", st::experimental::NaturalType{},
+          "x", st::NaturalType{},
           std::make_unique<st::Expr>(st::LambdaExpr(
-              "r", st::experimental::NaturalType{},
+              "r", st::NaturalType{},
               std::make_unique<st::Expr>(st::ApplyExpr(
                   std::make_unique<st::Expr>(st::builtins::successor),
                   std::make_unique<st::Expr>(st::VarExpr("r")))))))),
       std::make_unique<st::Expr>(st::NatConstExpr(5)));
   st::TypeCheckerVisitor tc;
-  ASSERT_TRUE(tc.getType(five).check<st::experimental::NaturalType>());
+  ASSERT_TRUE(tc.getType(five).check<st::NaturalType>());
 }
 
 TEST(TypeChecker, AddFunction) {
   st::Expr add = st::LambdaExpr(
-      "x", st::experimental::NaturalType{},
+      "x", st::NaturalType{},
       std::make_unique<st::Expr>(st::LambdaExpr(
-          "y", st::experimental::NaturalType{},
+          "y", st::NaturalType{},
           std::make_unique<st::Expr>(st::RecursionExpr(
               std::make_unique<st::Expr>(st::VarExpr("x")),
               std::make_unique<st::Expr>(st::LambdaExpr(
-                  "_", st::experimental::NaturalType{},
+                  "_", st::NaturalType{},
                   std::make_unique<st::Expr>(st::LambdaExpr(
-                      "r", st::experimental::NaturalType{},
+                      "r", st::NaturalType{},
                       std::make_unique<st::Expr>(st::ApplyExpr(
                           std::make_unique<st::Expr>(st::builtins::successor),
                           std::make_unique<st::Expr>(st::VarExpr("r")))))))),
               std::make_unique<st::Expr>(st::VarExpr("y")))))));
   st::TypeCheckerVisitor tc;
-  ASSERT_TRUE(tc.getType(add).check<st::experimental::Lambda>(
-      st::experimental::NaturalType{},
-      st::experimental::Lambda(st::experimental::NaturalType{},
-                               st::experimental::NaturalType{})));
+  ASSERT_TRUE(tc.getType(add).check<st::Lambda>(
+      st::NaturalType{}, st::Lambda(st::NaturalType{}, st::NaturalType{})));
 }

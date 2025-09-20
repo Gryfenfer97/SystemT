@@ -19,7 +19,7 @@ TEST(Reduction, Succ) {
 
 TEST(Reduction, LambdaApplication) {
   st::LambdaExpr plus_one =
-      st::LambdaExpr("x", st::experimental::NaturalType{},
+      st::LambdaExpr("x", st::NaturalType{},
                      std::make_unique<st::Expr>(st::ApplyExpr(
                          std::make_unique<st::Expr>(st::builtins::successor),
                          std::make_unique<st::Expr>(st::VarExpr("x")))));
@@ -36,15 +36,15 @@ TEST(Reduction, LambdaApplication) {
 /// Add num1 + num2 (5 + 7)
 TEST(Reduction, AddFunction) {
   st::Expr add = st::LambdaExpr(
-      "x", st::experimental::NaturalType{},
+      "x", st::NaturalType{},
       std::make_unique<st::Expr>(st::LambdaExpr(
-          "y", st::experimental::NaturalType{},
+          "y", st::NaturalType{},
           std::make_unique<st::Expr>(st::RecursionExpr(
               std::make_unique<st::Expr>(st::VarExpr("x")),
               std::make_unique<st::Expr>(st::LambdaExpr(
-                  "_", st::experimental::NaturalType{},
+                  "_", st::NaturalType{},
                   std::make_unique<st::Expr>(st::LambdaExpr(
-                      "r", st::experimental::NaturalType{},
+                      "r", st::NaturalType{},
                       std::make_unique<st::Expr>(st::ApplyExpr(
                           std::make_unique<st::Expr>(st::builtins::successor),
                           std::make_unique<st::Expr>(st::VarExpr("r")))))))),

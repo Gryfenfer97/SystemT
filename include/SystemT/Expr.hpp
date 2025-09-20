@@ -47,11 +47,10 @@ public:
 class LambdaExpr {
 public:
   std::string m_parameterName;
-  experimental::Type m_parameterType;
+  Type m_parameterType;
   ExprHandle m_body;
 
-  LambdaExpr(std::string parameterName, experimental::Type parameterType,
-             ExprHandle body);
+  LambdaExpr(std::string parameterName, Type parameterType, ExprHandle body);
   ~LambdaExpr();
   LambdaExpr(const LambdaExpr &);
   LambdaExpr(LambdaExpr &&) = default;
@@ -91,11 +90,11 @@ public:
   using NativeFn = std::function<Expr(const Expr &)>;
   std::string m_name;
   NativeFn m_function;
-  experimental::Type m_domain;
-  experimental::Type m_codomain;
+  Type m_domain;
+  Type m_codomain;
 
-  NativeFunctionExpr(std::string name, NativeFn function,
-                     experimental::Type domain, experimental::Type codomain);
+  NativeFunctionExpr(std::string name, NativeFn function, Type domain,
+                     Type codomain);
   ~NativeFunctionExpr();
   NativeFunctionExpr(const NativeFunctionExpr &);
   NativeFunctionExpr(NativeFunctionExpr &&) = default;

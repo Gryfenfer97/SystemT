@@ -3,16 +3,13 @@
 #include <memory>
 
 template <>
-struct std::formatter<systemT::experimental::Type>
-    : std::formatter<std::string_view> {
-  auto format(const systemT::experimental::Type &obj,
-              std::format_context &ctx) const {
-
+struct std::formatter<systemT::Type> : std::formatter<std::string_view> {
+  auto format(const systemT::Type &obj, std::format_context &ctx) const {
     return std::formatter<string_view>::format(obj.toString(), ctx);
   }
 };
 
-namespace systemT::experimental {
+namespace systemT {
 
 Lambda::Lambda(std::unique_ptr<Type> domain,
                std::unique_ptr<Type> codomain) noexcept
@@ -44,4 +41,4 @@ std::string Type::PrintVisitor::operator()(const Lambda &lambda) const {
   return std::format("λ {} -> {}", lambda.getDomain(), lambda.getCodomain());
 }
 
-} // namespace systemT::experimental
+} // namespace systemT
