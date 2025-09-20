@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.24)
 project(SystemT)
 
 include(CTest)
+option(SYSTEMT_BUILD_TESTS "Build SystemT tests" ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_program(CLANG_TIDY NAMES "clang-tidy" REQUIRED)
@@ -22,4 +23,6 @@ target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -Wpedantic -Wshadow
                                               -Wconversion)
 target_link_options(${PROJECT_NAME} PRIVATE -Wl,--no-undefined)
 
-add_subdirectory(tests)
+if(SYSTEMT_BUILD_TESTS)
+  add_subdirectory(tests)
+endif()
