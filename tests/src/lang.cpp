@@ -68,3 +68,14 @@ TEST(Lang, AddFunction) {
   ASSERT_TRUE(value.checkType<systemT::NatConstExpr>());
   ASSERT_EQ(value.as<st::NatConstExpr>().m_value, 5 + 7);
 }
+
+TEST(Lang, Assignment) {
+  const std::string code =
+      "add = (lam x: N. lam y: N. rec x (lam k: N. (lam r: N. "
+      "(S r))) y)";
+  Parser parser(code);
+  auto ast = parser.parse();
+  systemT::SubstitutionVisitor visitor;
+  auto value = visitor.reduce(*ast);
+  ASSERT_TRUE(value.checkType<systemT::LambdaExpr>());
+}

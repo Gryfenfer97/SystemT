@@ -14,6 +14,7 @@ class LambdaExpr;
 class ApplyExpr;
 class RecursionExpr;
 class NativeFunctionExpr;
+class AssignExpr;
 
 struct Expr;
 using ExprHandle = std::unique_ptr<Expr>;
@@ -102,6 +103,19 @@ public:
   [[nodiscard]] bool operator==(const NativeFunctionExpr &rhs) const;
 };
 
+class AssignExpr {
+public:
+  std::string m_varName;
+  ExprHandle m_value;
+
+  AssignExpr(std::string varName, ExprHandle m_value);
+  ~AssignExpr();
+  AssignExpr(const AssignExpr &);
+  AssignExpr(AssignExpr &&) = default;
+
+  [[nodiscard]] bool operator==(const AssignExpr &rhs) const;
+};
+
 struct Expr {
   Expr(const VarExpr &expr) : kind(expr) {}
   Expr(const NatConstExpr &expr) : kind(expr) {}
@@ -115,8 +129,10 @@ struct Expr {
   Expr(RecursionExpr &&expr) : kind(std::move(expr)) {}
   Expr(const NativeFunctionExpr &expr) : kind(expr) {}
   Expr(NativeFunctionExpr &&expr) : kind(std::move(expr)) {}
+  Expr(const AssignExpr &expr) : kind(expr) {}
+  Expr(AssignExpr &&expr) : kind(std::move(expr)) {}
   std::variant<VarExpr, NatConstExpr, SuccExpr, LambdaExpr, ApplyExpr,
-               RecursionExpr, NativeFunctionExpr>
+               RecursionExpr, NativeFunctionExpr, AssignExpr>
       kind;
   [[nodiscard]] bool operator==(const Expr &expr) const {
     return kind == expr.kind;
@@ -135,5 +151,6 @@ template <typename R> class ExprVisitor {
   virtual R operator()(const ApplyExpr &) = 0;
   virtual R operator()(const RecursionExpr &) = 0;
   virtual R operator()(const NativeFunctionExpr &) = 0;
+  virtual R operator()(const AssignExpr &) = 0;
 };
 } // namespace systemT

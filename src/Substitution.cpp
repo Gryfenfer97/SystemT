@@ -109,3 +109,10 @@ systemT::SubstitutionVisitor::operator()(const systemT::RecursionExpr &expr) {
                        std::make_unique<Expr>(std::move(l2)));
   return succ_evaluator.reduce(app);
 }
+
+systemT::Expr
+systemT::SubstitutionVisitor::operator()(const systemT::AssignExpr &expr) {
+  Expr value = reduce(*expr.m_value);
+  current_env.insert(std::pair(expr.m_varName, value));
+  return value;
+}

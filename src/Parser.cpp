@@ -5,31 +5,43 @@
 #include <charconv>
 #include <memory>
 
-void Parser::nextToken() { m_currentToken = m_lexer.getNextToken(); }
+Token Parser::nextToken() { return m_lexer.get(m_currentTokenPos + 1); }
 
-std::unique_ptr<systemT::Expr> Parser::parse() { return parseTerm(); }
+std::unique_ptr<systemT::Expr> Parser::parse() { return parseAssignment(); }
 
 Token Parser::consume(const TokenType &expected,
                       const std::string &expected_str) {
-  const Token previousToken = m_currentToken;
+  const Token previousToken = currentToken();
   if (previousToken.type != expected) {
     throw std::runtime_error(std::format("Expected token '{}' but got '{}'",
                                          expected_str, previousToken.value));
   }
-  m_currentToken = m_lexer.getNextToken();
+  ++m_currentTokenPos;
   return previousToken;
 }
 
 Token Parser::advance() {
-  const Token previousToken = m_currentToken;
-  m_currentToken = m_lexer.getNextToken();
+  const Token previousToken = currentToken();
+  ++m_currentTokenPos;
   return previousToken;
+}
+
+std::unique_ptr<systemT::Expr> Parser::parseAssignment() {
+  if (currentToken().type == TokenType::VAR &&
+      nextToken().type == TokenType::EQUAL) {
+
+    Token varName = consume(TokenType::VAR, "var");
+    advance();
+    return std::make_unique<systemT::Expr>(
+        systemT::AssignExpr(varName.value, parseTerm()));
+  }
+  return parseTerm();
 }
 
 std::unique_ptr<systemT::Expr> Parser::parseTerm() { return parseLam(); }
 
 std::unique_ptr<systemT::Expr> Parser::parseLam() {
-  if (m_currentToken.type == TokenType::LAMBDA) {
+  if (currentToken().type == TokenType::LAMBDA) {
     advance();
     Token parameterName = consume(TokenType::VAR, "var");
     consume(TokenType::COLON, ":");
@@ -51,8 +63,8 @@ std::unique_ptr<systemT::Expr> Parser::parseLam() {
 
 std::unique_ptr<systemT::Expr> Parser::parseApp() {
   auto term = parseAtom();
-  while (m_currentToken.type != TokenType::END_OF_FILE &&
-         m_currentToken.type != TokenType::RPAREN) {
+  while (currentToken().type != TokenType::END_OF_FILE &&
+         currentToken().type != TokenType::RPAREN) {
     term = std::make_unique<systemT::Expr>(
         systemT::ApplyExpr{std::move(term), parseAtom()});
   }
@@ -60,7 +72,7 @@ std::unique_ptr<systemT::Expr> Parser::parseApp() {
 }
 
 std::unique_ptr<systemT::Expr> Parser::parseAtom() {
-  switch (m_currentToken.type) {
+  switch (currentToken().type) {
   case TokenType::VAR: {
     return std::make_unique<systemT::Expr>(systemT::VarExpr(advance().value));
   }
@@ -87,13 +99,13 @@ std::unique_ptr<systemT::Expr> Parser::parseAtom() {
   }
   default:
     throw std::runtime_error(
-        std::format("Parsing error: unkown token {}", m_currentToken.value));
+        std::format("Parsing error: unkown token {}", currentToken().value));
   }
 }
 
 systemT::Type Parser::parseType() {
   auto left = parseTypeAtom();
-  if (m_currentToken.type == TokenType::ARROW) {
+  if (currentToken().type == TokenType::ARROW) {
     advance();
     auto right = parseType();
     return systemT::Lambda{left, right};
@@ -102,11 +114,11 @@ systemT::Type Parser::parseType() {
 }
 
 systemT::Type Parser::parseTypeAtom() {
-  if (m_currentToken.type == TokenType::NAT_TYPE) {
+  if (currentToken().type == TokenType::NAT_TYPE) {
     advance();
     return systemT::NaturalType{};
   }
-  if (m_currentToken.type == TokenType::LPAREN) {
+  if (currentToken().type == TokenType::LPAREN) {
     advance();
     auto inside = parseType();
     consume(TokenType::RPAREN, ")");
