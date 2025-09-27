@@ -1,5 +1,7 @@
 #pragma once
+#include <optional>
 #include <string>
+#include <vector>
 
 enum class TokenType {
   NAT,
@@ -14,6 +16,7 @@ enum class TokenType {
   COLON,
   NAT_TYPE,
   SUCC,
+  EQUAL,
   END_OF_FILE
 };
 
@@ -28,11 +31,15 @@ struct Token {
 
 class Lexer {
 public:
-  Lexer(std::string input) : m_input(std::move(input)), m_pos(0) {}
-
-  Token getNextToken();
+  Lexer(std::string input) : m_input(std::move(input)) {}
+  void tokenize();
+  Token get(std::size_t pos) { return m_tokens.at(pos); }
 
 private:
+  Token lexToken();
+
+private:
+  std::vector<Token> m_tokens;
   std::string m_input;
-  std::size_t m_pos;
+  std::size_t m_pos = 0;
 };

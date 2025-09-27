@@ -1,7 +1,17 @@
 #include "SystemT/Tokenizer.hpp"
 #include <stdexcept>
 
-Token Lexer::getNextToken() {
+void Lexer::tokenize() {
+
+  Token token = lexToken();
+  while (token.type != TokenType::END_OF_FILE) {
+    m_tokens.push_back(token);
+    token = lexToken();
+  }
+  m_tokens.push_back(token);
+}
+
+Token Lexer::lexToken() {
   while (m_pos < m_input.length() && std::isspace(m_input[m_pos]) != 0) {
     m_pos++;
   }
@@ -36,6 +46,10 @@ Token Lexer::getNextToken() {
     m_pos += 2;
     return {.type = TokenType::ARROW, .value = "->"};
   }
+  if (currentChar == '=') {
+    m_pos++;
+    return {.type = TokenType::EQUAL, .value = "="};
+  }
 
   // Handle numeric literals.
   if (std::isdigit(currentChar) != 0) {
@@ -63,10 +77,6 @@ Token Lexer::getNextToken() {
       return {.type = TokenType::REC, .value = "rec"};
     }
 
-    // TODO: if
-    // if (ident_str == "if") {
-    //   return {IF, "if"};
-    // }
     return {.type = TokenType::VAR, .value = ident_str};
   }
 
