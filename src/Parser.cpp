@@ -7,16 +7,6 @@
 
 Token Parser::nextToken() { return m_lexer.get(m_currentTokenPos + 1); }
 
-std::vector<std::unique_ptr<systemT::Expr>> Parser::parse() {
-  std::vector<std::unique_ptr<systemT::Expr>> assignments;
-  assignments.push_back(parseAssignment());
-  while (currentToken().type == TokenType::NEWLINE) {
-    advance();
-    assignments.push_back(parseAssignment());
-  }
-  return assignments;
-}
-
 Token Parser::consume(const TokenType &expected,
                       const std::string &expected_str) {
   const Token previousToken = currentToken();
@@ -32,6 +22,19 @@ Token Parser::advance() {
   const Token previousToken = currentToken();
   ++m_currentTokenPos;
   return previousToken;
+}
+
+std::vector<std::unique_ptr<systemT::Expr>> Parser::parse() {
+  std::vector<std::unique_ptr<systemT::Expr>> assignments;
+
+  do {
+    assignments.push_back(parseAssignment());
+    while (currentToken().type == TokenType::NEWLINE) {
+      advance();
+    }
+  } while (currentToken().type != TokenType::END_OF_FILE);
+
+  return assignments;
 }
 
 std::unique_ptr<systemT::Expr> Parser::parseAssignment() {

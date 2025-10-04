@@ -1,5 +1,6 @@
 [test_requires]
 gtest/1.16.0
+cli11/2.5.0
 
 [generators]
 CMakeDeps

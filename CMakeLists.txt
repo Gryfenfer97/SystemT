@@ -3,6 +3,7 @@ project(SystemT)
 
 include(CTest)
 option(SYSTEMT_BUILD_TESTS "Build SystemT tests" ON)
+option(SYSTEMT_BUILD_CLI "Build SystemT CLI" ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_program(CLANG_TIDY NAMES "clang-tidy" REQUIRED)
@@ -22,6 +23,10 @@ target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_23)
 target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -Wpedantic -Wshadow
                                               -Wconversion)
 target_link_options(${PROJECT_NAME} PRIVATE -Wl,--no-undefined)
+
+if(SYSTEMT_BUILD_CLI)
+  add_subdirectory(cli)
+endif()
 
 if(SYSTEMT_BUILD_TESTS)
   add_subdirectory(tests)
