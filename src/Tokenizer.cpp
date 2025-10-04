@@ -12,7 +12,8 @@ void Lexer::tokenize() {
 }
 
 Token Lexer::lexToken() {
-  while (m_pos < m_input.length() && std::isspace(m_input[m_pos]) != 0) {
+  while (m_pos < m_input.length() && std::isspace(m_input[m_pos]) != 0 &&
+         m_input[m_pos] != '\n') {
     m_pos++;
   }
 
@@ -22,6 +23,10 @@ Token Lexer::lexToken() {
 
   char currentChar = m_input[m_pos];
 
+  if (currentChar == '\n') {
+    m_pos++;
+    return {.type = TokenType::NEWLINE, .value = "newline"};
+  }
   if (currentChar == '(') {
     m_pos++;
     return {.type = TokenType::LPAREN, .value = "("};

@@ -7,7 +7,15 @@
 
 Token Parser::nextToken() { return m_lexer.get(m_currentTokenPos + 1); }
 
-std::unique_ptr<systemT::Expr> Parser::parse() { return parseAssignment(); }
+std::vector<std::unique_ptr<systemT::Expr>> Parser::parse() {
+  std::vector<std::unique_ptr<systemT::Expr>> assignments;
+  assignments.push_back(parseAssignment());
+  while (currentToken().type == TokenType::NEWLINE) {
+    advance();
+    assignments.push_back(parseAssignment());
+  }
+  return assignments;
+}
 
 Token Parser::consume(const TokenType &expected,
                       const std::string &expected_str) {
@@ -64,7 +72,8 @@ std::unique_ptr<systemT::Expr> Parser::parseLam() {
 std::unique_ptr<systemT::Expr> Parser::parseApp() {
   auto term = parseAtom();
   while (currentToken().type != TokenType::END_OF_FILE &&
-         currentToken().type != TokenType::RPAREN) {
+         currentToken().type != TokenType::RPAREN &&
+         currentToken().type != TokenType::NEWLINE) {
     term = std::make_unique<systemT::Expr>(
         systemT::ApplyExpr{std::move(term), parseAtom()});
   }
