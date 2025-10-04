@@ -32,6 +32,8 @@ public:
 
   Expr operator()(const NativeFunctionExpr &expr) override { return expr; }
 
+  Expr operator()(const AssignExpr &expr) override;
+
 private:
   Expr applyLambda(const LambdaExpr &func, const Expr &arg) {
     VariableEnv body_env = current_env;

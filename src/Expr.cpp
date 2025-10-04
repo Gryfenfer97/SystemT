@@ -67,9 +67,21 @@ NativeFunctionExpr::NativeFunctionExpr(std::string name, NativeFn function,
 NativeFunctionExpr::~NativeFunctionExpr() = default;
 NativeFunctionExpr::NativeFunctionExpr(const NativeFunctionExpr &) = default;
 
-[[nodiscard]] bool
-NativeFunctionExpr::operator==(const NativeFunctionExpr &rhs) const {
+bool NativeFunctionExpr::operator==(const NativeFunctionExpr &rhs) const {
   return m_name == rhs.m_name;
+}
+
+AssignExpr::AssignExpr(std::string varName, ExprHandle value)
+    : m_varName(std::move(varName)), m_value(std::move(value)) {}
+
+AssignExpr::~AssignExpr() = default;
+
+AssignExpr::AssignExpr(const AssignExpr &expr)
+    : m_varName(expr.m_varName),
+      m_value(std::make_unique<Expr>(*expr.m_value)) {}
+
+bool AssignExpr::operator==(const AssignExpr &rhs) const {
+  return m_varName == rhs.m_varName && *m_value == *rhs.m_value;
 }
 
 } // namespace systemT

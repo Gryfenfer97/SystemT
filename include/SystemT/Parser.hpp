@@ -4,11 +4,12 @@
 
 class Parser {
 public:
-  Parser(const std::string &input) : m_lexer(input) { nextToken(); }
+  Parser(const std::string &input) : m_lexer(input) { m_lexer.tokenize(); }
   [[nodiscard]] std::unique_ptr<systemT::Expr> parse();
 
 private:
-  void nextToken();
+  [[nodiscard]] Token nextToken();
+  [[nodiscard]] std::unique_ptr<systemT::Expr> parseAssignment();
   [[nodiscard]] std::unique_ptr<systemT::Expr> parseAtom();
   [[nodiscard]] std::unique_ptr<systemT::Expr> parseApp();
   [[nodiscard]] std::unique_ptr<systemT::Expr> parseLam();
@@ -18,7 +19,8 @@ private:
   [[nodiscard]] systemT::Type parseTypeAtom();
   Token consume(const TokenType &expected, const std::string &expected_str);
   Token advance();
+  [[nodiscard]] Token currentToken() { return m_lexer.get(m_currentTokenPos); }
 
   Lexer m_lexer;
-  Token m_currentToken;
+  std::size_t m_currentTokenPos = 0;
 };

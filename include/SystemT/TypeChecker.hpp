@@ -84,5 +84,9 @@ public:
   Type operator()(const NativeFunctionExpr &expr) override {
     return Lambda{expr.m_domain, expr.m_codomain};
   }
+
+  Type operator()(const AssignExpr &expr) override {
+    return getType(*expr.m_value);
+  }
 };
 } // namespace systemT

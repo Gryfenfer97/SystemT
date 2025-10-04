@@ -42,5 +42,8 @@ public:
   std::string operator()(const NativeFunctionExpr &expr) override {
     return expr.m_name;
   }
+  std::string operator()(const AssignExpr &expr) override {
+    return std::format("{} = ({})", expr.m_varName, toString(*expr.m_value));
+  }
 };
 } // namespace systemT
