@@ -3,9 +3,9 @@
 #include "SystemT/builtins.hpp"
 #include <memory>
 
-systemT::SubstitutionVisitor::SubstitutionVisitor() : current_env({}) {
-  current_env.insert(std::pair(systemT::builtins::successor.m_name,
-                               Expr(systemT::builtins::successor)));
+systemT::VariableEnv::VariableEnv() : m_parent(nullptr) {
+  assign(systemT::builtins::successor.m_name,
+         Expr(systemT::builtins::successor));
 }
 
 systemT::Expr
@@ -14,7 +14,7 @@ systemT::SubstitutionVisitor::operator()(const systemT::VarExpr &expr) {
     throw std::runtime_error(
         std::format("Variable {} does not exists", expr.m_name));
   }
-  return current_env.at(expr.m_name);
+  return *current_env.lookup(expr.m_name);
 }
 
 systemT::Expr
@@ -39,17 +39,16 @@ systemT::SubstitutionVisitor::operator()(const systemT::ApplyExpr &expr) {
   Expr func = func_evaluator.reduce(*expr.m_func);
 
   if (func.checkType<VarExpr>()) {
-    auto value = this->current_env.find(func.as<VarExpr>().m_name);
-    if (value == this->current_env.end()) {
+    const auto *value = this->current_env.lookup(func.as<VarExpr>().m_name);
+    if (value == nullptr) {
       throw std::runtime_error(
           std::format("Variable {} not found", func.as<VarExpr>().m_name));
     }
-    if (value->second.checkType<LambdaExpr>()) {
-      return applyLambda(value->second.as<LambdaExpr>(), arg_reduced);
+    if (value->checkType<LambdaExpr>()) {
+      return applyLambda(value->as<LambdaExpr>(), arg_reduced);
     }
-    if (value->second.checkType<NativeFunctionExpr>()) {
-      return applyNativeFunction(value->second.as<NativeFunctionExpr>(),
-                                 arg_reduced);
+    if (value->checkType<NativeFunctionExpr>()) {
+      return applyNativeFunction(value->as<NativeFunctionExpr>(), arg_reduced);
     }
     throw std::runtime_error(std::format("Variable {} is not a function",
                                          func.as<VarExpr>().m_name));
@@ -68,9 +67,8 @@ systemT::SubstitutionVisitor::operator()(const systemT::ApplyExpr &expr) {
 
 systemT::Expr
 systemT::SubstitutionVisitor::operator()(const systemT::LambdaExpr &expr) {
-  VariableEnv new_env = current_env;
-  new_env.emplace(
-      std::pair(expr.m_parameterName, VarExpr(expr.m_parameterName)));
+  VariableEnv new_env(current_env);
+  new_env.assign(expr.m_parameterName, VarExpr(expr.m_parameterName));
   SubstitutionVisitor visitor(new_env);
   auto reduced_body = visitor.reduce(*expr.m_body);
   return LambdaExpr{expr.m_parameterName, expr.m_parameterType,
@@ -113,6 +111,6 @@ systemT::SubstitutionVisitor::operator()(const systemT::RecursionExpr &expr) {
 systemT::Expr
 systemT::SubstitutionVisitor::operator()(const systemT::AssignExpr &expr) {
   Expr value = reduce(*expr.m_value);
-  current_env.insert(std::pair(expr.m_varName, value));
+  current_env.assign(expr.m_varName, value);
   return value;
 }

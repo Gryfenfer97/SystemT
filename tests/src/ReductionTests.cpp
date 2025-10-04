@@ -1,9 +1,9 @@
 #include "SystemT/Expr.hpp"
-#include "SystemT/TypeChecker.hpp"
 #include "SystemT/builtins.hpp"
 #include <SystemT/Substitution.hpp>
 #include <gtest/gtest.h>
-#include <variant>
+
+static systemT::VariableEnv emptyEnv = {};
 
 namespace st = systemT;
 TEST(Reduction, Succ) {
@@ -11,7 +11,7 @@ TEST(Reduction, Succ) {
       st::ApplyExpr(std::make_unique<st::Expr>(st::builtins::successor),
                     std::make_unique<st::Expr>(st::NatConstExpr(1)));
 
-  st::SubstitutionVisitor evaluator;
+  st::SubstitutionVisitor evaluator(emptyEnv);
   const auto value = evaluator.reduce(two);
   ASSERT_TRUE(value.checkType<st::NatConstExpr>());
   ASSERT_EQ(value.as<st::NatConstExpr>(), st::NatConstExpr{2});
@@ -27,7 +27,7 @@ TEST(Reduction, LambdaApplication) {
   st::Expr five =
       st::ApplyExpr(std::make_unique<st::Expr>(std::move(plus_one)),
                     std::make_unique<st::Expr>(st::NatConstExpr{4}));
-  st::SubstitutionVisitor evaluator;
+  st::SubstitutionVisitor evaluator(emptyEnv);
   const auto value = evaluator.reduce(five);
   ASSERT_TRUE(value.checkType<st::NatConstExpr>());
   ASSERT_EQ(value.as<st::NatConstExpr>(), st::NatConstExpr{5});
@@ -58,7 +58,7 @@ TEST(Reduction, AddFunction) {
                         std::make_unique<st::Expr>(std::move(add)),
                         std::make_unique<st::Expr>(st::NatConstExpr(num1)))),
                     std::make_unique<st::Expr>(st::NatConstExpr(num2)));
-  st::SubstitutionVisitor evaluator;
+  st::SubstitutionVisitor evaluator(emptyEnv);
   // const auto intermediateValue = evaluator.reduce(app1);
   // ASSERT_TRUE(intermediateValue.checkType<st::LambdaExpr>());
   // auto value1_reduced_as_lambda = intermediateValue.as<st::LambdaExpr>();

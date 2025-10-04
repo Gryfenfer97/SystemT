@@ -6,7 +6,8 @@ namespace systemT::builtins {
 static NativeFunctionExpr successor(
     "S",
     [](const Expr &arg) -> Expr {
-      SubstitutionVisitor visitor;
+      VariableEnv env;
+      SubstitutionVisitor visitor(env);
       if (arg.checkType<NatConstExpr>()) {
         return NatConstExpr{arg.as<NatConstExpr>().m_value + 1};
       }

@@ -16,6 +16,7 @@ enum class TokenType {
   NAT_TYPE,
   SUCC,
   EQUAL,
+  NEWLINE,
   END_OF_FILE
 };
 
@@ -37,7 +38,6 @@ public:
 private:
   Token lexToken();
 
-private:
   std::vector<Token> m_tokens;
   std::string m_input;
   std::size_t m_pos = 0;

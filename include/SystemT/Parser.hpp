@@ -1,11 +1,13 @@
 #pragma once
 #include "Expr.hpp"
 #include "Tokenizer.hpp"
+#include <memory>
+#include <vector>
 
 class Parser {
 public:
   Parser(const std::string &input) : m_lexer(input) { m_lexer.tokenize(); }
-  [[nodiscard]] std::unique_ptr<systemT::Expr> parse();
+  [[nodiscard]] std::vector<std::unique_ptr<systemT::Expr>> parse();
 
 private:
   [[nodiscard]] Token nextToken();

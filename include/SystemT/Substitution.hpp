@@ -1,20 +1,45 @@
 #pragma once
 #include "Expr.hpp"
-#include <map>
+#include <memory>
 #include <string>
+#include <unordered_map>
 #include <variant>
 
 namespace systemT {
 
-using VariableEnv = std::map<std::string, Expr>;
+struct VariableEnv {
+  std::unordered_map<std::string, Expr> m_locals;
+  VariableEnv *m_parent; // because C++ does not support std::optional<T&> yet
+
+  VariableEnv();
+
+  VariableEnv(VariableEnv *parent) : m_parent(parent) {}
+
+  [[nodiscard]] Expr *lookup(const std::string &name) {
+    const auto localValue = m_locals.find(name);
+    if (localValue != m_locals.end()) {
+      return &localValue->second;
+    }
+    if (m_parent != nullptr) {
+      return m_parent->lookup(name);
+    }
+    return nullptr;
+  }
+
+  [[nodiscard]] bool contains(const std::string &name) {
+    return lookup(name) != nullptr;
+  }
+
+  void assign(const std::string &name, const Expr &value) {
+    m_locals.emplace(std::pair(name, value));
+  }
+};
 
 class SubstitutionVisitor : public ExprVisitor<Expr> {
-  VariableEnv current_env;
+  VariableEnv &current_env;
 
 public:
-  SubstitutionVisitor();
-  SubstitutionVisitor(VariableEnv initial_env)
-      : current_env(std::move(initial_env)) {}
+  SubstitutionVisitor(VariableEnv &initial_env) : current_env(initial_env) {}
 
   Expr reduce(const Expr &expr) { return std::visit(*this, expr.kind); }
 
@@ -36,8 +61,8 @@ public:
 
 private:
   Expr applyLambda(const LambdaExpr &func, const Expr &arg) {
-    VariableEnv body_env = current_env;
-    body_env.emplace(std::pair(func.m_parameterName, arg));
+    VariableEnv body_env(current_env);
+    body_env.assign(func.m_parameterName, arg);
     SubstitutionVisitor reduction_visitor(body_env);
     return reduction_visitor.reduce(*func.m_body);
   }
