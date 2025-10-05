@@ -4,6 +4,20 @@ An implementation of **Gödel’s System T**, a simply-typed lambda calculus wit
 
 ---
 
+## 📖 Examples
+
+### Addition
+
+```
+add = (lam x: N. lam y: N. rec x (lam k: N. (lam r: N. (S r))) y)
+```
+
+## 💻 CLI
+
+```bash
+st-cli ./input.st
+```
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -19,24 +33,19 @@ An implementation of **Gödel’s System T**, a simply-typed lambda calculus wit
 git clone https://github.com/Gryfenfer97/SystemT.git
 cd SystemT
 
-# Configure and build with CMake
-cmake -B build -DCMAKE_BUILD_TYPE=Release -DSYSTEMT_BUILD_TESTS=OFF
-cmake --build build
+# 1. Install test dependencies
+conan install . --build=missing
+
+# 2. Configure with the "tests" preset
+cmake --preset conan-release
+
+# 3. Build
+cmake --build --preset conan-release
 ```
 
 ### 🧪 Running Tests
 
-The interpreter itself has no external dependencies, but the test suite requires **Conan 2**.  
 ```bash
-# 1. Install test dependencies
-conan install . --output-folder=build --build=missing
-
-# 2. Configure with the "tests" preset
-cmake --preset tests
-
-# 3. Build
-cmake --build --preset tests
-
-# 4. Run the tests
-ctest --preset tests
+ctest --preset conan-release
 ```
+
