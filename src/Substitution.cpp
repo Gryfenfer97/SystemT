@@ -1,5 +1,6 @@
 #include "SystemT/Substitution.hpp"
 #include "SystemT/ASTPrint.hpp"
+#include "SystemT/Expr.hpp"
 #include "SystemT/builtins.hpp"
 #include <memory>
 
@@ -50,6 +51,12 @@ systemT::SubstitutionVisitor::operator()(const systemT::ApplyExpr &expr) {
     if (value->checkType<NativeFunctionExpr>()) {
       return applyNativeFunction(value->as<NativeFunctionExpr>(), arg_reduced);
     }
+    if (value->checkType<VarExpr>()) {
+      // TODO: use the type checker here
+      return ApplyExpr(std::make_unique<Expr>(func),
+                       std::make_unique<Expr>(arg_reduced));
+    }
+
     throw std::runtime_error(std::format("Variable {} is not a function",
                                          func.as<VarExpr>().m_name));
   }
