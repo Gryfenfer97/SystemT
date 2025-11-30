@@ -36,7 +36,7 @@ cd SystemT
 # 1. Install test dependencies
 conan install . --build=missing
 
-# 2. Configure with the "tests" preset
+# 2. Configure with the "conan-<config>" preset
 cmake --preset conan-release
 
 # 3. Build
